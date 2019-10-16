@@ -32,4 +32,13 @@ target_include_directories("${PROJECT_NAME}"
   "include"
 )
 
+target_compile_options("${PROJECT_NAME}" PRIVATE
+  $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:
+    -Wall
+    -Wextra
+    -Werror
+    -pedantic-errors
+  >
+)
+
 conan_target_link_libraries("${PROJECT_NAME}")
