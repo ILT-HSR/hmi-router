@@ -1,3 +1,10 @@
 /build
+
+# Cevelop
+
 /.cproject
 /.project
+
+# CLion
+
+/.idea
