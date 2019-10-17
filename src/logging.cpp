@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <array>
 #include <stdexcept>
+#include <string>
 #include <utility>
 
 namespace hmi
