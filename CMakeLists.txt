@@ -5,10 +5,6 @@ project("hmi-router"
   VERSION "1.0.0"
 )
 
-if(POLICY CMP0076)
-  cmake_policy(SET CMP0076 NEW)
-endif()
-
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
 
 set(CMAKE_CXX_STANDARD "17")
@@ -29,15 +25,10 @@ conan_cmake_run(CONANFILE "conanfile.txt"
 
 include("CUTE")
 
-# General Targets
+# Core Object Library
 
 add_library("${PROJECT_NAME}_objs" OBJECT
   "src/logging.cpp"
-)
-
-target_sources("${PROJECT_NAME}_objs"
-  PUBLIC
-  "include/logging.h"
 )
 
 target_compile_options("${PROJECT_NAME}_objs" PUBLIC
@@ -55,6 +46,25 @@ target_include_directories("${PROJECT_NAME}_objs"
 )
 
 conan_target_link_libraries("${PROJECT_NAME}_objs")
+
+get_target_property(${PROJECT_NAME}_SOURCES "${PROJECT_NAME}_objs" SOURCES)
+foreach(SOURCE_FILE IN LISTS ${PROJECT_NAME}_SOURCES)
+  if(SOURCE_FILE MATCHES "src/.*\.cpp")
+    string(REGEX REPLACE
+      "src/(.*)\.cpp"
+      "include/\\1.h"
+      HEADER_FILE
+      "${SOURCE_FILE}"
+    )
+    get_filename_component(HEADER_FILE_PATH "${HEADER_FILE}" REALPATH)
+    if(EXISTS "${HEADER_FILE_PATH}")
+      target_sources("${PROJECT_NAME}_objs"
+        INTERFACE
+        "${HEADER_FILE_PATH}"
+      )
+    endif()
+  endif()
+endforeach()
 
 # Executables
 
