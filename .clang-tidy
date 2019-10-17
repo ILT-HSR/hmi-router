@@ -1,0 +1,7 @@
+---
+Checks:                'clang-diagnostic-*,clang-analyzer-*,cppcoreguidelines-*,misc-*,modernize-*,portability-*,bugprone-*,-modernize-use-trailing-return-type'
+WarningsAsErrors:      ''
+HeaderFilterRegex:     '.*'
+AnalyzeTemporaryDtors: false
+FormatStyle:           file
+...
