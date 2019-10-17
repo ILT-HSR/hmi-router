@@ -27,9 +27,9 @@ namespace hmi
   std::string to_string(log_level level);
 
   template<typename... SinkTypes>
-  std::shared_ptr<spdlog::logger> make_logger(std::string const & name, log_level level, std::shared_ptr<SinkTypes> &&... sinks)
+  std::shared_ptr<spdlog::logger> make_logger(std::string const & name, log_level level, std::shared_ptr<SinkTypes>... sinks)
   {
-    auto logger = std::make_shared<spdlog::logger>(name, std::forward<std::shared_ptr<SinkTypes>>(sinks)...);
+    auto logger = std::make_shared<spdlog::logger>(name, spdlog::sinks_init_list{sinks...});
     auto const real_level = [&] {
       switch (level)
       {
