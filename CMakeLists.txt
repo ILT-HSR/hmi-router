@@ -11,7 +11,17 @@ set(CMAKE_CXX_STANDARD "17")
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "RelWithDebInfo")
+endif()
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
+
+include("clang-tidy")
 include("conan")
+include("CUTE")
 
 conan_check(REQUIRED)
 conan_add_remote(NAME bincrafters URL "https://api.bintray.com/conan/bincrafters/public-conan")
@@ -22,8 +32,6 @@ conan_cmake_run(CONANFILE "conanfile.txt"
   BUILD "missing"
   NO_OUTPUT_DIRS
 )
-
-include("CUTE")
 
 # Core Object Library
 
