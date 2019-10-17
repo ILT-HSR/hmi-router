@@ -36,6 +36,7 @@ conan_cmake_run(CONANFILE "conanfile.txt"
 # Core Object Library
 
 add_library("${PROJECT_NAME}_objs" OBJECT
+  "src/connection.cpp"
   "src/logging.cpp"
 )
 

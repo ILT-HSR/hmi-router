@@ -20,6 +20,8 @@ namespace hmi
     error,
   };
 
+  using logger_ptr = std::shared_ptr<spdlog::logger>;
+
   template<>
   log_level from_string(std::string const & name);
 
