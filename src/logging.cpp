@@ -10,10 +10,10 @@
 
 namespace hmi
 {
-  auto level_string_map = std::array{std::pair{log_level::debug, "debug"},
-                                     std::pair{log_level::info, "info"},
-                                     std::pair{log_level::warning, "warning"},
-                                     std::pair{log_level::error, "error"}};
+  auto constexpr level_string_map = std::array{std::pair{log_level::debug, "debug"},
+                                               std::pair{log_level::info, "info"},
+                                               std::pair{log_level::warning, "warning"},
+                                               std::pair{log_level::error, "error"}};
 
   template<>
   log_level from_string(std::string const & name)
