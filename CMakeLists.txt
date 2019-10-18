@@ -38,6 +38,7 @@ conan_cmake_run(CONANFILE "conanfile.txt"
 add_library("${PROJECT_NAME}_objs" OBJECT
   "src/connection.cpp"
   "src/logging.cpp"
+  "src/stranded.cpp"
 )
 
 target_compile_options("${PROJECT_NAME}_objs" PUBLIC

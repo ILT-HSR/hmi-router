@@ -2,9 +2,8 @@
 #define HMI_ROUTER_CONNECTION_H
 
 #include "logging.h"
+#include "stranded.h"
 
-#include <boost/asio/io_context.hpp>
-#include <boost/asio/io_context_strand.hpp>
 #include <boost/system/error_code.hpp>
 #include <spdlog/logger.h>
 
@@ -19,7 +18,10 @@ namespace hmi
 {
   using connection_ptr = std::shared_ptr<struct connection>;
 
-  struct connection : std::enable_shared_from_this<connection>
+  struct connection
+      : stranded
+      , logging
+      , std::enable_shared_from_this<connection>
   {
     using message_handler_t = std::function<void(std::string const &)>;
     using error_handler_t = std::function<void(boost::system::system_error const &)>;
@@ -51,27 +53,14 @@ namespace hmi
 
     virtual boost::system::system_error do_terminate() = 0;
 
-    boost::asio::io_context & context() noexcept;
-
-    boost::asio::io_context::strand const & strand() const noexcept;
-
-    spdlog::logger & logger() const noexcept;
-
     std::vector<error_handler_t> & error_handlers() noexcept;
 
     std::vector<message_handler_t> & message_handlers() noexcept;
 
     std::queue<std::string> & outgoing_messages() noexcept;
 
-    void dispatch(std::function<void()> callable) noexcept;
-
   private:
     connection(boost::asio::io_context & context, logger_ptr logger) noexcept;
-
-    boost::asio::io_context & m_context;
-    boost::asio::io_context::strand m_strand;
-
-    logger_ptr m_logger;
 
     std::vector<error_handler_t> m_error_handlers{};
     std::vector<message_handler_t> m_message_handlers{};

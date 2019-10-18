@@ -3,18 +3,19 @@
 #include <boost/asio/bind_executor.hpp>
 #include <boost/asio/dispatch.hpp>
 
-#include <stdexcept>
+#include <queue>
+#include <string>
 #include <type_traits>
 #include <utility>
+#include <vector>
 
 namespace asio = boost::asio;
 
 namespace hmi
 {
   connection::connection(asio::io_context & context, logger_ptr logger) noexcept
-      : m_context{context}
-      , m_strand{m_context}
-      , m_logger{logger ? std::move(logger) : throw std::invalid_argument{"Null logger!"}}
+      : stranded(context)
+      , logging(std::move(logger))
   {
   }
 
@@ -65,21 +66,6 @@ namespace hmi
     return do_terminate();
   }
 
-  asio::io_context & connection::context() noexcept
-  {
-    return m_context;
-  }
-
-  asio::io_context::strand const & connection::strand() const noexcept
-  {
-    return m_strand;
-  }
-
-  spdlog::logger & connection::logger() const noexcept
-  {
-    return *m_logger;
-  }
-
   std::vector<connection::error_handler_t> & connection::error_handlers() noexcept
   {
     return m_error_handlers;
@@ -93,11 +79,6 @@ namespace hmi
   std::queue<std::string> & connection::outgoing_messages() noexcept
   {
     return m_outgoing_messages;
-  }
-
-  void connection::dispatch(std::function<void()> callable) noexcept
-  {
-    asio::dispatch(asio::bind_executor(m_strand, callable));
   }
 
 }  // namespace hmi

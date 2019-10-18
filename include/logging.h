@@ -9,9 +9,27 @@
 #include <memory>
 #include <string>
 #include <type_traits>
+#include <utility>
 
 namespace hmi
 {
+  using logger_ptr = std::shared_ptr<spdlog::logger>;
+
+  struct logging
+  {
+    explicit logging(logger_ptr logger);
+
+    void swap(logging & other) noexcept;
+
+  protected:
+    [[nodiscard]] spdlog::logger & logger() const noexcept;
+
+  private:
+    logger_ptr m_logger;
+  };
+
+  void swap(logging & lhs, logging & rhs) noexcept;
+
   enum struct log_level : std::underlying_type_t<std::byte>
   {
     debug,
@@ -19,8 +37,6 @@ namespace hmi
     warning,
     error,
   };
-
-  using logger_ptr = std::shared_ptr<spdlog::logger>;
 
   template<>
   log_level from_string(std::string const & name);
