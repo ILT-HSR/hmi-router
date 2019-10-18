@@ -46,6 +46,7 @@ target_compile_options("${PROJECT_NAME}_objs" PUBLIC
     -Wextra
     -Werror
     -pedantic-errors
+    -Wno-terminate
   >
 )
 

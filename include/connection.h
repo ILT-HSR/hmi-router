@@ -6,38 +6,77 @@
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/io_context_strand.hpp>
 #include <boost/system/error_code.hpp>
+#include <spdlog/logger.h>
 
 #include <functional>
+#include <memory>
+#include <queue>
 #include <string>
+#include <type_traits>
+#include <vector>
 
 namespace hmi
 {
-  struct connection
+  using connection_ptr = std::shared_ptr<struct connection>;
+
+  struct connection : std::enable_shared_from_this<connection>
   {
     using message_handler_t = std::function<void(std::string const &)>;
     using error_handler_t = std::function<void(boost::system::system_error const &)>;
 
-    connection(boost::asio::io_context & context, logger_ptr logger);
+    connection(connection const &) = delete;
 
-    void add_error_handler(message_handler_t handler);
+    connection(connection &&) noexcept = delete;
 
-    void add_message_handler(message_handler_t handler);
+    virtual ~connection() noexcept = default;
 
-    void send(std::string message);
+    connection & operator=(connection const &) = delete;
 
-    boost::system::system_error terminate();
+    connection & operator=(connection &&) noexcept = delete;
+
+    bool add_error_handler(error_handler_t handler) noexcept;
+
+    bool add_message_handler(message_handler_t handler) noexcept;
+
+    void start() noexcept;
+
+    void send(std::string message) noexcept(std::is_nothrow_move_constructible_v<std::string>);
+
+    boost::system::system_error terminate() noexcept;
 
   protected:
-    virtual void do_read();
+    virtual void do_read() = 0;
 
-    virtual void do_send();
+    virtual void do_send() = 0;
 
-    virtual void do_terminate();
+    virtual boost::system::system_error do_terminate() = 0;
+
+    boost::asio::io_context & context() noexcept;
+
+    boost::asio::io_context::strand const & strand() const noexcept;
+
+    spdlog::logger & logger() const noexcept;
+
+    std::vector<error_handler_t> & error_handlers() noexcept;
+
+    std::vector<message_handler_t> & message_handlers() noexcept;
+
+    std::queue<std::string> & outgoing_messages() noexcept;
+
+    void dispatch(std::function<void()> callable) noexcept;
+
+  private:
+    connection(boost::asio::io_context & context, logger_ptr logger) noexcept;
 
     boost::asio::io_context & m_context;
-    boost::asio::io_context::strand const m_strand{m_context};
+    boost::asio::io_context::strand m_strand;
 
     logger_ptr m_logger;
+
+    std::vector<error_handler_t> m_error_handlers{};
+    std::vector<message_handler_t> m_message_handlers{};
+
+    std::queue<std::string> m_outgoing_messages{};
   };
 }  // namespace hmi
 

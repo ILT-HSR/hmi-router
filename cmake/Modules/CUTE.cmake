@@ -78,6 +78,10 @@ function(cute_suite)
     "${CUTE_DRIVER_TARGET_NAME}"
     "${CUTE_SUITE_LIBRARIES}"
   )
+  set_target_properties("${CUTE_SUITE_TARGET_NAME}"
+    PROPERTIES
+    CXX_CLANG_TIDY ""
+  )
   add_test(NAME "${CUTE_SUITE_TARGET_NAME}"
     COMMAND "${CUTE_SUITE_TARGET_NAME}"
   )
