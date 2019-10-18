@@ -8,9 +8,10 @@
 
 namespace hmi
 {
-  listener::listener(boost::asio::io_context & context, logger_ptr logger) noexcept
+  listener::listener(boost::asio::io_context & context, logger_ptr logger, connection_factory_t connection_factory) noexcept
       : stranded(context)
       , logging(std::move(logger))
+      , m_connection_factory(std::move(connection_factory))
   {
     assert(logger);
   }
@@ -41,9 +42,7 @@ namespace hmi
 
   void listener::alert_connection_handlers(connection_ptr connection) const noexcept
   {
-    for_each(std::execution::par_unseq, cbegin(m_connection_handlers), cend(m_connection_handlers), [&](auto const handler) {
-      handler(connection);
-    });
+    for_each(cbegin(m_connection_handlers), cend(m_connection_handlers), [&](auto const handler) { handler(connection); });
   }
 
 }  // namespace hmi
