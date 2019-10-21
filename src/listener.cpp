@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <cassert>
-#include <execution>
 #include <iterator>
 #include <utility>
 
