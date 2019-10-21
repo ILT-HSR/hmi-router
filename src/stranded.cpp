@@ -11,12 +11,12 @@ namespace hmi
   {
   }
 
-  boost::asio::io_context & stranded::context() noexcept
+  [[nodiscard]] boost::asio::io_context & stranded::context() noexcept
   {
     return m_context;
   }
 
-  boost::asio::io_context::strand const & stranded::strand() const noexcept
+  [[nodiscard]] boost::asio::io_context::strand const & stranded::strand() const noexcept
   {
     return *m_strand;
   }

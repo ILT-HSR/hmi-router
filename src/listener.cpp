@@ -7,10 +7,9 @@
 
 namespace hmi
 {
-  listener::listener(boost::asio::io_context & context, logger_ptr logger, connection_factory_t connection_factory) noexcept
+  listener::listener(boost::asio::io_context & context, logger_ptr logger) noexcept
       : stranded(context)
       , logging(std::move(logger))
-      , m_connection_factory(std::move(connection_factory))
   {
     assert(logger);
   }

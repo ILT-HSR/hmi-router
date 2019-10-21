@@ -8,6 +8,7 @@
 #include <boost/asio/io_context.hpp>
 
 #include <functional>
+#include <type_traits>
 #include <vector>
 
 namespace hmi
@@ -16,11 +17,22 @@ namespace hmi
       : stranded
       , logging
   {
-    using connection_factory_t = std::function<connection_ptr(boost::asio::io_context &, logger_ptr)>;
-
     using connection_handler_t = std::function<void(connection_ptr)>;
 
-    listener(boost::asio::io_context & context, logger_ptr logger, connection_factory_t connection_factory) noexcept;
+    listener(listener const &) noexcept(false) = default;
+
+    listener(listener &&) noexcept(std::is_nothrow_move_constructible<logging>{} &&
+                                   std::is_nothrow_move_constructible<stranded>{}) = default;
+
+    listener(boost::asio::io_context & context, logger_ptr logger) noexcept;
+
+    virtual ~listener() noexcept = default;
+
+    listener & operator=(listener const &) noexcept(false) = default;
+
+    listener & operator=(listener &&) noexcept(std::is_nothrow_move_constructible<std::vector<connection_handler_t>>{} &&
+                                               std::is_nothrow_move_constructible<logging>{} &&
+                                               std::is_nothrow_move_constructible<stranded>{}) = default;
 
     bool add_connection_listener(connection_handler_t handler) noexcept;
 
@@ -36,8 +48,6 @@ namespace hmi
     void alert_connection_handlers(connection_ptr connection) const noexcept;
 
   private:
-    connection_factory_t m_connection_factory;
-
     std::vector<connection_handler_t> m_connection_handlers;
   };
 }  // namespace hmi

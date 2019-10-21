@@ -20,9 +20,9 @@ namespace hmi
     void swap(stranded & other) noexcept;
 
   protected:
-    boost::asio::io_context & context() noexcept;
+    [[nodiscard]] boost::asio::io_context & context() noexcept;
 
-    boost::asio::io_context::strand const & strand() const noexcept;
+    [[nodiscard]] boost::asio::io_context::strand const & strand() const noexcept;
 
     template<typename CallableType>
     std::void_t<> dispatch(CallableType callable) const;
