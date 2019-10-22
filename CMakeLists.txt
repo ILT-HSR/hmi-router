@@ -41,6 +41,7 @@ add_library("${PROJECT_NAME}_objs" OBJECT
   "src/logging.cpp"
   "src/stranded.cpp"
   "src/todo.cpp"
+  "src/ws_connection.cpp"
   "src/ws_listener.cpp"
 )
 

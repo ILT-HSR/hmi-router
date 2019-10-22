@@ -33,6 +33,11 @@ namespace hmi
     return *m_logger;
   }
 
+  logger_ptr logging::raw_logger() const noexcept
+  {
+    return m_logger;
+  }
+
   void swap(logging & lhs, logging & rhs) noexcept
   {
     lhs.swap(rhs);

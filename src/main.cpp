@@ -4,6 +4,7 @@
 
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/tcp.hpp>
+#include <spdlog/fmt/fmt.h>
 #include <spdlog/fmt/ostr.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 
@@ -15,7 +16,7 @@ auto constexpr default_port = 2222;
 int main()
 {
   auto logger_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-  auto logger = hmi::make_logger("hmi-router", hmi::log_level::info, logger_sink);
+  auto logger = hmi::make_logger("hmi-router", hmi::log_level::debug, logger_sink);
 
   logger->info("HMI Router starting up...");
 
@@ -26,6 +27,16 @@ int main()
 
     logger->info("Starting WebSocket listener on: {}", endpoint);
     auto listener = hmi::ws_listener{context, endpoint, logger};
+
+    listener.add_connection_listener([&](auto new_connection) {
+      logger->info("New connection '{}'", fmt::ptr(new_connection.get()));
+      new_connection->add_message_handler([&](auto connection, auto message) {
+        logger->info("New message: {}", message);
+        connection->send(message);
+      });
+      new_connection->start();
+    });
+
     listener.start();
 
     context.run();

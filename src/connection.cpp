@@ -3,6 +3,8 @@
 #include <boost/asio/bind_executor.hpp>
 #include <boost/asio/dispatch.hpp>
 
+#include <algorithm>
+#include <iterator>
 #include <queue>
 #include <string>
 #include <type_traits>
@@ -61,19 +63,22 @@ namespace hmi
     });
   }
 
-  boost::system::system_error connection::terminate() noexcept
+  boost::system::error_code connection::terminate() noexcept
   {
     return do_terminate();
   }
 
-  std::vector<connection::error_handler_t> & connection::error_handlers() noexcept
+  void connection::alert_error_handlers(boost::system::error_code error) noexcept
   {
-    return m_error_handlers;
+    for_each(
+        cbegin(m_error_handlers), cend(m_error_handlers), [&](auto const & handler) { handler(shared_from_this(), error); });
   }
 
-  std::vector<connection::message_handler_t> & connection::message_handlers() noexcept
+  void connection::alert_message_handlers(std::string message) noexcept
   {
-    return m_message_handlers;
+    for_each(cbegin(m_message_handlers), cend(m_message_handlers), [&](auto const & handler) {
+      handler(shared_from_this(), message);
+    });
   }
 
   std::queue<std::string> & connection::outgoing_messages() noexcept

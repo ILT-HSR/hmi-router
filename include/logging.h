@@ -24,6 +24,8 @@ namespace hmi
   protected:
     [[nodiscard]] spdlog::logger & logger() const noexcept;
 
+    [[nodiscard]] logger_ptr raw_logger() const noexcept;
+
   private:
     logger_ptr m_logger;
   };

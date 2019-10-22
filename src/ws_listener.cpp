@@ -1,6 +1,7 @@
 #include "ws_listener.h"
 
 #include "todo.h"
+#include "ws_connection.h"
 
 #include <boost/asio/socket_base.hpp>
 #include <boost/system/error_code.hpp>
@@ -37,7 +38,7 @@ namespace hmi
 
   void ws_listener::accept()
   {
-    m_acceptor.async_accept(strand(), [&](auto error, auto socket) {
+    m_acceptor.async_accept(context(), [&](auto error, auto socket) {
       if (error)
       {
         logger().error("Error accepting new connection: {}", error);
@@ -46,7 +47,10 @@ namespace hmi
 
       logger().debug("Accepted new connection from: {}", socket.remote_endpoint());
 
-      todo("ws_listener::accept: Implement WebSocket connection class and creation");
+      auto connection = ws_connection::make(context(), std::move(socket), raw_logger());
+
+      alert_connection_handlers(connection);
+      accept();
     });
   }
 
