@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION "3.9.0")
+cmake_minimum_required(VERSION "3.12.0")
 
 project("hmi-router"
   LANGUAGES CXX
@@ -36,7 +36,13 @@ conan_cmake_run(CONANFILE "conanfile.txt"
 # Core Object Library
 
 add_library("${PROJECT_NAME}_objs" OBJECT
+  "src/connection.cpp"
+  "src/listener.cpp"
   "src/logging.cpp"
+  "src/stranded.cpp"
+  "src/todo.cpp"
+  "src/ws_connection.cpp"
+  "src/ws_listener.cpp"
 )
 
 target_compile_options("${PROJECT_NAME}_objs" PUBLIC
@@ -45,6 +51,7 @@ target_compile_options("${PROJECT_NAME}_objs" PUBLIC
     -Wextra
     -Werror
     -pedantic-errors
+    -Wno-terminate
   >
 )
 

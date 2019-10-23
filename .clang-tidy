@@ -1,7 +1,7 @@
 ---
-Checks:                'clang-diagnostic-*,clang-analyzer-*,cppcoreguidelines-*,misc-*,modernize-*,portability-*,bugprone-*,-modernize-use-trailing-return-type'
+Checks:                '-clang-diagnostic-*,clang-analyzer-*,cppcoreguidelines-*,misc-*,modernize-*,portability-*,bugprone-*,-modernize-use-trailing-return-type'
 WarningsAsErrors:      ''
-HeaderFilter:          '(?!cute/.*)'
+HeaderFilterRegex:     '.*'
 AnalyzeTemporaryDtors: false
 FormatStyle:           file
 ...

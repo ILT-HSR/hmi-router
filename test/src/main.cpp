@@ -1,5 +1,6 @@
 #include <cute.h>
 #include <cute_runner.h>
+#include <ide_listener.h>
 #include <tap_listener.h>
 #include <xml_listener.h>
 
@@ -12,7 +13,7 @@ std::pair<std::string, cute::suite> get_suite();
 int main(int argc, char ** argv)
 {
   auto xml_file = cute::xml_file_opener{argc, argv};
-  auto listener = cute::xml_listener<cute::tap_listener<>>{xml_file.out};
+  auto listener = cute::xml_listener<cute::tap_listener<cute::ide_listener<>>>{xml_file.out};
   auto runner = cute::makeRunner(listener, argc, argv);
   auto [name, tests] = get_suite();
 

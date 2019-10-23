@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cassert>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -14,6 +15,33 @@ namespace hmi
                                                std::pair{log_level::info, "info"},
                                                std::pair{log_level::warning, "warning"},
                                                std::pair{log_level::error, "error"}};
+
+  logging::logging(logger_ptr logger)
+      : m_logger{std::move(logger)}
+  {
+    assert(logger);
+  }
+
+  void logging::swap(logging & other) noexcept
+  {
+    using std::swap;
+    swap(m_logger, other.m_logger);
+  }
+
+  spdlog::logger & logging::logger() const noexcept
+  {
+    return *m_logger;
+  }
+
+  logger_ptr logging::raw_logger() const noexcept
+  {
+    return m_logger;
+  }
+
+  void swap(logging & lhs, logging & rhs) noexcept
+  {
+    lhs.swap(rhs);
+  }
 
   template<>
   log_level from_string(std::string const & name)
@@ -38,4 +66,5 @@ namespace hmi
     throw std::invalid_argument{
         fmt::format("Unknown logging level {0}", static_cast<std::underlying_type_t<log_level>>(level))};
   }
+
 }  // namespace hmi
