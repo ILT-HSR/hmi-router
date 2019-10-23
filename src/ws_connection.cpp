@@ -134,7 +134,7 @@ namespace hmi
     {
       logger().error("Connection '{}' encountered an error while writing: {}", fmt::ptr(this), error.message());
       auto close_error = beast::error_code{};
-      m_stream.close(boost::beast::websocket::close_code::protocol_error);
+      m_stream.close(boost::beast::websocket::close_code::protocol_error, close_error);
       if (close_error)
       {
         logger().warn("Error while closing connection '{}': {}", fmt::ptr(this), close_error.message());
